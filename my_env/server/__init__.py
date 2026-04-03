@@ -6,6 +6,6 @@
 
 """My Env environment server components."""
 
-from .plant_environment import PlantEnvironment
+from .my_env_environment import MyEnvironment
 
-__all__ = ["PlantEnvironment"]
+__all__ = ["MyEnvironment"]

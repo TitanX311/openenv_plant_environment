@@ -1,13 +1,2 @@
-# Python/Gitignore
-__pycache__/
-*.py[cod]
-*$py.class
-.venv/
-.env
-.ipynb_checkpoints/
-.pytest_cache/
-.tox/
-build/
-dist/
-*.egg-info/
-.DS_Store
+.venv
+__pycache__
