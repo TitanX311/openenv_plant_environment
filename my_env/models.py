@@ -11,12 +11,12 @@ The plant_growth environment simulates plant development under agent control
 with realistic agricultural dynamics (biomass, water, nutrients, stress).
 """
 
-from dataclasses import dataclass, field
 from typing import Any, Dict, Optional
 
+from pydantic import BaseModel, Field, model_validator
 
-@dataclass
-class PlantAction:
+
+class PlantAction(BaseModel):
     """Action for the Plant Growth environment - management decisions."""
 
     irrigation: float = 0.0
@@ -31,7 +31,8 @@ class PlantAction:
     temperature_control: float = 0.0
     """Temperature control (0.0-1.0, fraction of max cooling/heating, 0.5=no change)"""
 
-    def __post_init__(self):
+    @model_validator(mode='after')
+    def validate_action(self):
         """Validate action values are in valid range [0.0, 1.0]."""
         for attr in ["irrigation", "nitrogen_fertilizer", "pruning", "temperature_control"]:
             value = getattr(self, attr)
@@ -39,10 +40,10 @@ class PlantAction:
                 raise ValueError(
                     f"{attr} must be in range [0.0, 1.0], got {value}"
                 )
+        return self
 
 
-@dataclass
-class PlantObservation:
+class PlantObservation(BaseModel):
     """Observation from the Plant Growth environment - plant state and environmental conditions."""
 
     # Plant growth metrics
@@ -95,10 +96,11 @@ class PlantObservation:
     reward: Optional[float] = None
     """Reward for this step"""
 
-    metadata: Dict[str, Any] = field(default_factory=dict)
+    metadata: Dict[str, Any] = Field(default_factory=dict)
     """Additional metadata from environment"""
 
-    def __post_init__(self):
+    @model_validator(mode='after')
+    def validate_observation(self):
         """Validate observation values are in expected ranges."""
         # Validate 0-1 normalized fields
         normalized_fields = {
@@ -115,9 +117,9 @@ class PlantObservation:
                 )
 
         # Validate day range
-        if not (0 <= self.day_of_simulation <= 89):
+        if not (0 <= self.day_of_simulation <= 90):
             raise ValueError(
-                f"day_of_simulation must be in range [0, 89], got {self.day_of_simulation}"
+                f"day_of_simulation must be in range [0, 90], got {self.day_of_simulation}"
             )
 
         # Validate phenological stage
@@ -125,3 +127,4 @@ class PlantObservation:
             raise ValueError(
                 f"phenological_stage must be in range [0, 10], got {self.phenological_stage}"
             )
+        return self

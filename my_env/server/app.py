@@ -36,18 +36,18 @@ except Exception as e:  # pragma: no cover
     ) from e
 
 try:
-    from ..models import MyAction, MyObservation
-    from .my_env_environment import MyEnvironment
-except ModuleNotFoundError:
-    from models import MyAction, MyObservation
-    from server.my_env_environment import MyEnvironment
+    from ..models import PlantAction, PlantObservation
+    from .plant_environment import PlantEnvironment
+except ImportError:
+    from models import PlantAction, PlantObservation
+    from server.plant_environment import PlantEnvironment
 
 
 # Create the app with web interface and README integration
 app = create_app(
-    MyEnvironment,
-    MyAction,
-    MyObservation,
+    PlantEnvironment,
+    PlantAction,
+    PlantObservation,
     env_name="my_env",
     max_concurrent_envs=1,  # increase this number to allow more concurrent WebSocket sessions
 )
