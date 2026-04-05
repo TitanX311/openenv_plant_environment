@@ -43,6 +43,7 @@ def update_nutrient_dynamics(state, action, params, dt=0.01):
 
     Nr = len(r)
     dr = r[1] - r[0]
+    root_zone_cells = max(1, int(params.get("root_zone_cells", 3)))
 
     r0 = params["r0"]
 
@@ -106,18 +107,30 @@ def update_nutrient_dynamics(state, action, params, dt=0.01):
         # ----------------------------
         idx = np.argmin(np.abs(r - r0))
 
+        if idx == 0:
+            C_root = float(np.mean(C[:min(root_zone_cells, Nr)]))
+        else:
+            i0 = max(0, idx - root_zone_cells // 2)
+            i1 = min(Nr, i0 + root_zone_cells)
+            C_root = float(np.mean(C[i0:i1]))
+
         uptake = (
             Imax[nutrient]
-            * C[idx]
-            / (Km[nutrient] + C[idx])
+            * C_root
+            / (Km[nutrient] + C_root + 1e-12)
         )
 
-        C_new[idx] -= dt * uptake * L
+        # If root is at the first grid node, uptake is enforced through the
+        # root-surface flux boundary below (avoid double-counting sink).
+        if idx != 0:
+            C_new[idx] -= dt * uptake * L
 
         # Root-surface flux BC at r0:
         # -D_i dC_i/dr = Imax_i*C_i0/(Km_i + C_i0)
         uptake_flux = uptake
-        C_new[0] = max(C_new[1] - dr * uptake_flux / (D[nutrient] + 1e-12), 0.0)
+        max_flux_from_gradient = D[nutrient] * C_new[1] / (dr + 1e-12)
+        uptake_flux = min(uptake_flux, 0.95 * max_flux_from_gradient)
+        C_new[0] = C_new[1] - dr * uptake_flux / (D[nutrient] + 1e-12)
 
         # ----------------------------
         # Boundary conditions

@@ -13,11 +13,21 @@ def compute_total_uptake(state, params):
     r0 = params["r0"]
 
     idx = np.argmin(np.abs(r - r0))
+    root_zone_cells = max(1, int(params.get("root_zone_cells", 3)))
+
+    # Use a small root-zone average rather than a single node to reduce
+    # grid-level oscillations at the root boundary.
+    if idx == 0:
+        sl = slice(0, min(root_zone_cells, len(r)))
+    else:
+        i0 = max(0, idx - root_zone_cells // 2)
+        i1 = min(len(r), i0 + root_zone_cells)
+        sl = slice(i0, i1)
 
     concentrations = {
-        "N": state["C_N"][idx],
-        "P": state["C_P"][idx],
-        "K": state["C_K"][idx],
+        "N": float(np.mean(state["C_N"][sl])),
+        "P": float(np.mean(state["C_P"][sl])),
+        "K": float(np.mean(state["C_K"][sl])),
     }
 
     Imax = {
