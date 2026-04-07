@@ -37,10 +37,10 @@ except Exception as e:  # pragma: no cover
 
 try:
     from ..models import PlantAction, PlantObservation
-    from .plant_environment import PlantEnvironment
+    from .environment import PlantEnvironment
 except ImportError:
     from models import PlantAction, PlantObservation
-    from server.plant_environment import PlantEnvironment
+    from server.environment import PlantEnvironment
 
 
 # Create the app with web interface and README integration

@@ -42,21 +42,16 @@ RUN if ! command -v uv >/dev/null 2>&1; then \
         mv /root/.local/bin/uvx /usr/local/bin/uvx; \
     fi
     
-# Install dependencies using uv sync
-# If uv.lock exists, use it; otherwise resolve on the fly
+# Create an isolated environment and install runtime dependencies explicitly.
+# This avoids project-package discovery issues from `uv sync --no-install-project`.
 RUN --mount=type=cache,target=/root/.cache/uv \
-    if [ -f uv.lock ]; then \
-        uv sync --frozen --no-install-project --no-editable; \
-    else \
-        uv sync --no-install-project --no-editable; \
-    fi
-
-RUN --mount=type=cache,target=/root/.cache/uv \
-    if [ -f uv.lock ]; then \
-        uv sync --frozen --no-editable; \
-    else \
-        uv sync --no-editable; \
-    fi
+    uv venv .venv && \
+    uv pip install --python .venv/bin/python --no-cache-dir \
+        'openenv-core[core]>=0.2.2' \
+        'fastapi>=0.115.0' \
+        'uvicorn>=0.24.0' \
+        'numpy>=1.24.0' \
+        python-dotenv
 
 # Final runtime stage
 FROM ${BASE_IMAGE}

@@ -62,7 +62,7 @@ From the `plant_soil_env` directory, build and run the Docker container:
 
 ```bash
 # Build the Docker image
-docker build -t plant_soil_env-env:latest -f Dockerfile .
+docker build -t plant_soil_env-env:latest -f server/Dockerfile .
 
 # Remove any previous container (ignore errors if not present)
 docker rm -f plant_soil_env_live >/dev/null 2>&1 || true

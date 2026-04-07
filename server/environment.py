@@ -5,14 +5,13 @@ from uuid import uuid4
 import numpy as np
 
 from openenv.core.env_server.interfaces import Environment
-from openenv.core.env_server.types import State
 
 try:
-    from ..models import PlantAction, PlantObservation
+    from ..models import PlantAction, PlantObservation, PlantState
     from ..simulator.state import initialize_env
     from ..simulator.step import step_environment
 except ImportError:
-    from models import PlantAction, PlantObservation
+    from models import PlantAction, PlantObservation, PlantState
     from simulator.state import initialize_env
     from simulator.step import step_environment
 
@@ -21,7 +20,7 @@ class PlantEnvironment(Environment):
     SUPPORTS_CONCURRENT_SESSIONS: bool = True
 
     def __init__(self):
-        self._state = State(episode_id=str(uuid4()), step_count=0)
+        self._state = PlantState(episode_id=str(uuid4()), step_count=0)
         self._sim_state = None
         self._params = None
         self._dt = 0.01
@@ -34,7 +33,7 @@ class PlantEnvironment(Environment):
         }
 
     def reset(self) -> PlantObservation:
-        self._state = State(episode_id=str(uuid4()), step_count=0)
+        self._state = PlantState(episode_id=str(uuid4()), step_count=0)
         self._sim_state, self._params = initialize_env(seed=None)
         return self._build_observation(
             reward=0.0,
@@ -117,5 +116,5 @@ class PlantEnvironment(Environment):
         )
 
     @property
-    def state(self) -> State:
+    def state(self) -> PlantState:
         return self._state

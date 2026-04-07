@@ -4,12 +4,10 @@ from typing import Dict
 
 from openenv.core import EnvClient
 from openenv.core.client_types import StepResult
-from openenv.core.env_server.types import State
-
-from .models import PlantAction, PlantObservation
+from .models import PlantAction, PlantObservation, PlantState
 
 
-class PlantEnv(EnvClient[PlantAction, PlantObservation, State]):
+class PlantEnv(EnvClient[PlantAction, PlantObservation, PlantState]):
     """Client for my_env plant-soil environment."""
 
     def _step_payload(self, action: PlantAction) -> Dict:
@@ -47,8 +45,8 @@ class PlantEnv(EnvClient[PlantAction, PlantObservation, State]):
             done=payload.get("done", False),
         )
 
-    def _parse_state(self, payload: Dict) -> State:
-        return State(
+    def _parse_state(self, payload: Dict) -> PlantState:
+        return PlantState(
             episode_id=payload.get("episode_id"),
             step_count=payload.get("step_count", 0),
         )

@@ -9,9 +9,9 @@ requires = ["setuptools>=45", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "openenv-my_env"
+name = "openenv-plant-soil-env"
 version = "0.1.0"
-description = "My Env environment for OpenEnv"
+description = "Plant Soil Environment for OpenEnv"
 requires-python = ">=3.10"
 dependencies = [
     # Core OpenEnv runtime (provides FastAPI server + HTTP client types)
@@ -22,6 +22,8 @@ dependencies = [
     # Add all dependencies needed for your environment here
     # Examples:
     "numpy>=1.24.0",
+    "python-dotenv",
+    "python-dotenv",
     # "torch>=2.0.0",
     # "gymnasium>=0.29.0",
     # "openspiel>=1.0.0",
@@ -37,9 +39,9 @@ dev = [
 [project.scripts]
 # Server entry point - enables running via: uv run --project . server
 # or: python -m my_env.server.app
-server = "my_env.server.app:main"
+server = "plant_soil_env.server.app:main"
 
 [tool.setuptools]
 include-package-data = true
-packages = ["my_env", "my_env.server", "my_env.simulator"]
-package-dir = { "my_env" = ".", "my_env.server" = "server", "my_env.simulator" = "simulator" }
+packages = ["plant_soil_env", "plant_soil_env.server", "plant_soil_env.simulator"]
+package-dir = { "plant_soil_env" = ".", "plant_soil_env.server" = "server", "plant_soil_env.simulator" = "simulator" }

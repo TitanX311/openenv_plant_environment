@@ -1,6 +1,6 @@
 """Data models for my_env based on the plant-soil simulator."""
 
-from openenv.core.env_server.types import Action, Observation
+from openenv.core.env_server import Action, Observation, State
 from pydantic import Field
 
 
@@ -29,3 +29,8 @@ class PlantObservation(Observation):
     u_eff: float = Field(default=0.0)
     terminated: bool = Field(default=False)
     truncated: bool = Field(default=False)
+
+
+class PlantState(State):
+    """Internal state for plant-soil simulation."""
+    pass
